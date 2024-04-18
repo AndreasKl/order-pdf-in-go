@@ -4,12 +4,14 @@ import (
 	"os"
 	"os/exec"
 	"testing"
+	"time"
 
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGenerate(t *testing.T) {
+	start := time.Now()
 	orderGenerator := New()
 
 	pdfBytes, err := orderGenerator.Generate(prepareFakeOrder(t))
@@ -21,6 +23,9 @@ func TestGenerate(t *testing.T) {
 	_, err = pdf.Write(pdfBytes.Bytes())
 	require.NoError(t, err)
 	require.NoError(t, pdf.Close())
+
+	duration := time.Since(start)
+	t.Logf("Report took: %s\n", duration)
 
 	openPdf(t, pdf.Name())
 }
